@@ -10,14 +10,14 @@ bool http_post_json(const char *url, json_t *data){
 
     char *string_data = json_dumps(data, 0);
     if(!string_data){
-        fprintf(stderr,"Erro");
+        fprintf(stderr,"Erro ao converter");
         return false;
     }
 
     char *result = http_post(url,string_data);
 
     if(result == NULL){
-        fprintf(stderr, "Erro pos");
+        fprintf(stderr, "Erro no resposta");
         return false;
     }
 
