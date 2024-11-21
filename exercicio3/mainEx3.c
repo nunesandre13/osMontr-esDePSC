@@ -86,7 +86,7 @@ Products *node_products(json_t *array_products){
 //---------------------------------------------------------------------------------//
 
 typedef struct {
-    Node
+    Node *head;
 } Users;
 
 
@@ -115,7 +115,6 @@ Users *user_get(){
 Users *node_users(json_t *array_users){
     //cria a head
     Node *user_head = createHead();
-
     //obtem o tamanho do array
     size_t array_size = json_array_size(array_users);
 
@@ -136,6 +135,21 @@ Users *node_users(json_t *array_users){
 
 
 
+bool cart_put(Cart *cart){
+    *char url = "https://dummyjson.com/card/add"
+    json_t *new_json = json_object_get();
+    int result1 = json_object_set_new(new_json, "user_id", cart->user_id);
+    int result2 = json_object_set_new(new_json, "n_products", cart->n_products);
+    int result3 = json_object_set_new(new_json, "products", cart->products);
+    bool check = check_results(result1,result2,result3);
+    if(!check) return false 
+    bool request = *http_post_json(url, new_json);
+    
+}
+
+bool check_result(int a, int b, int c){
+    return (a == 0 && b == 0 && c == 0);
+}
 
 int main(){
     char *url = "https://dummyjson.com/products";
