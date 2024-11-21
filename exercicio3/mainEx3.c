@@ -144,7 +144,7 @@ Users *user_get(){
 
 //-----------------------------------------------------------------------------------------------//
 bool cart_put(Cart *cart){
-    char *url = "https://dummyjson.com/carts/ahfweifhwer";
+    char *url = "https://dummyjson.com/carts/add";
     // criar o json para mandar
     json_t *json_cart = json_object();
     if (!json_cart) {
