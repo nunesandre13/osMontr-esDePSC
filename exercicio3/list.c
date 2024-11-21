@@ -11,7 +11,7 @@ typedef struct Node {
 
 
 
-Node* creatHead(){
+Node* createHead(){
     Node *newNode = (Node*) malloc(sizeof(Node));
     if (newNode != NULL) {
         newNode->data = NULL;
@@ -30,7 +30,7 @@ Node* createNode(void *data) {
     return newNode;
 }
 
-// Função para inserir um novo nó no final da lista
+// Função para inserir um novo nó a seguir a HEAD
 void insert(Node *head, void *data) {
     Node *newNode = createNode(data);
     if (head-> next == NULL) {
@@ -67,4 +67,18 @@ void* get(Node *head, int index) {
         temp = temp->next;
     }
     return NULL;  // Retorna NULL se a posição for inválida
+}
+
+void freeList(Node *head, void (*free_data)(void *)) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+
+        if (current->data != NULL && free_data != NULL) {
+            free_data(current->data); 
+        }
+
+        free(current); 
+        current = next;
+    }
 }
