@@ -6,6 +6,9 @@
 
 #include "help.h"
 
+#define BUFFER_CHUNK (4 * 1024)
+
+
 
 bool http_post_json(const char *url, json_t *data){
 
@@ -42,17 +45,6 @@ json_t *http_get_json(const char *url) {
 	return root;
 }
 
-#define BUFFER_CHUNK (4 * 1024)
-
-struct write_buffer {
-	char *buffer;
-	int current, max;
-};
-
-struct read_buffer {
-	char *buffer;
-	int current, max;
-};
 
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *stream) {
 	struct write_buffer *result = (struct write_buffer *)stream;

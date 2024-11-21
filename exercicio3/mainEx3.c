@@ -7,7 +7,6 @@
 #include "help.h"
 #include "list.h"
 
-json_t *http_get_json(const char *url);
 
 typedef struct {
         int id;
@@ -83,7 +82,7 @@ Products *node_products(json_t *array_products){
     return products_head;
 }
 
-//---------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------//
 
 typedef struct {
     Node *head;
@@ -133,32 +132,90 @@ Users *node_users(json_t *array_users){
     return user_head;
 }
 
-
-
+//-----------------------------------------------------------------------------------------------//
 bool cart_put(Cart *cart){
-    *char url = "https://dummyjson.com/card/add"
-    json_t *new_json = json_object_get();
-    int result1 = json_object_set_new(new_json, "user_id", cart->user_id);
-    int result2 = json_object_set_new(new_json, "n_products", cart->n_products);
-    int result3 = json_object_set_new(new_json, "products", cart->products);
-    bool check = check_results(result1,result2,result3);
-    if(!check) return false 
-    bool request = *http_post_json(url, new_json);
-    
-}
-
-bool check_result(int a, int b, int c){
-    return (a == 0 && b == 0 && c == 0);
-}
-
-int main(){
-    char *url = "https://dummyjson.com/products";
-    json_t *root = http_get_json(url);
-
-    if (root) {
-        json_dumpf(root, stdout, JSON_INDENT(4)); 
-        fprintf(stderr, "Failed to get JSON\n");
+    char *url = "https://dummyjson.com/carts/ahfweifhwer";
+    json_t *json_cart = json_object();
+    if (!json_cart) {
+        fprintf(stderr, "Failed to create JSON object\n");
+        return false;
     }
-    if (root != NULL)
-        printf("OK\n");
+
+    int result1 = json_object_set_new(json_cart, "userId", json_integer(cart->user_id));
+    int result2 = json_object_set_new(json_cart, "totalProducts", json_integer(cart->n_products));
+    if(result1 != 0 || result2 != 0){
+        json_decref(json_cart);
+        return false;
+    } 
+
+    // criar array
+    json_t *products_array = json_array();
+    if (!products_array) {
+        fprintf(stderr, "Failed to create JSON object\n");
+        json_decref(json_cart);
+        return false;
+    }
+
+    for(int i = 0; i < cart->n_products;i++){
+        json_t *json_single_product = json_object();
+        if (!json_single_product) {
+            fprintf(stderr, "Failed to create JSON object for product\n");
+            json_decref(products_array);
+            json_decref(json_cart);
+            return false;
+        }
+        int result1 = json_object_set_new(json_single_product, "id", json_integer(cart->products[i].id));
+        int result2 = json_object_set_new(json_single_product, "quantity", json_integer(cart->products[i].quantity));
+        if (result1 != 0 || result2 != 0) {
+            json_decref(json_single_product);
+            json_decref(products_array);
+            json_decref(json_cart);
+            return false;
+        }
+        json_array_append_new(products_array,json_single_product);
+    }
+
+    int result3 = json_object_set_new(json_cart, "products", products_array);
+    if(result3 != 0) {
+        fprintf(stderr, "Failed to create JSON object\n");
+        json_decref(json_cart);
+        return false;
+    }
+
+    bool request = http_post_json(url, json_cart);
+    char *formatted_json = json_dumps(json_cart, JSON_INDENT(4));
+    printf("JSON:\n%s\n", formatted_json);
+    json_decref(json_cart);
+    return request;
+}
+
+int main() {
+    // Definir o número de produtos
+    size_t n_products = 2;
+
+    // Alocar memória para a estrutura Cart e seus produtos
+    Cart *cart = (Cart *)malloc(sizeof(Cart) + n_products * sizeof(cart->products[0]));
+
+    // Inicializar os campos
+    cart->user_id = 33;
+    cart->n_products = n_products;
+
+    // Inicializar os produtos
+    cart->products[0].id = 1;
+    cart->products[0].quantity = 3;
+    
+    cart->products[1].id = 2;
+    cart->products[1].quantity = 5;
+
+    // Testar a função cart_put
+    if (cart_put(cart)) {
+        printf("Carrinho enviado com sucesso!\n");
+    } else {
+        printf("Falha ao enviar o carrinho.\n");
+    }
+
+    // Liberar memória alocada para a estrutura Cart
+    free(cart);
+
+    return 0;
 }
