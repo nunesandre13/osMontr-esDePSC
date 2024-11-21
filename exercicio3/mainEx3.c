@@ -51,17 +51,23 @@ Products *products_get(){
         return NULL;
     }
 
-    Products *products = node_products(array_products);
+    //cria a head
+    Node *head = createHead();
+
+    //ponteiro para o retorno
+    Products *head_products = malloc(sizeof(Products));
+
+    head_products -> head = head;
+
+    node_products(head_products,array_products);
 
     json_decref(root);
 
-    return products;
+    return head_products;
 }
 
-Products *node_products(json_t *array_products){
-    //cria a head
-    Node *product_head = createHead();
-
+void node_products(Products *products ,json_t *array_products){
+ 
     //obtem o tamanho do array
     size_t array_size = json_array_size(array_products);
 
@@ -77,9 +83,8 @@ Products *node_products(json_t *array_products){
         new_product->description = strdup(json_string_value(json_object_get(product_json, "description")));
         new_product->category = strdup(json_string_value(json_object_get(product_json, "category")));
 
-        insert(product_head, new_product);
+        insert(products -> head, new_product);
     }
-    return products_head;
 }
 
 //--------------------------------------------------------------------------------------------------------//
@@ -102,18 +107,25 @@ Users *user_get(){
         json_decref(root); 
         return NULL;
     }
+    
+    //cria a head
+    Node *head = createHead();
 
-    Users *users = node_users(array_users);
+    //ponteiro para o retorno
+    Users *head_users = malloc(sizeof(Users));
+
+    head_users -> head = head;
+
+    node_users(head_users,array_users);
 
     json_decref(root);
 
-    return users;
+    return head_users;
 }
 
 
-Users *node_users(json_t *array_users){
-    //cria a head
-    Node *user_head = createHead();
+ void node_users(Users * users, json_t *array_users){
+
     //obtem o tamanho do array
     size_t array_size = json_array_size(array_users);
 
@@ -127,10 +139,10 @@ Users *node_users(json_t *array_users){
         new_user->id = json_integer_value(json_object_get(user_json, "id"));
         new_user->name = json_string_value(json_object_get(user_json, "name"));
 
-        insert(user_head, new_user);
+        insert(users ->head, new_user);
     }
-    return user_head;
 }
+
 
 //-----------------------------------------------------------------------------------------------//
 bool cart_put(Cart *cart){
