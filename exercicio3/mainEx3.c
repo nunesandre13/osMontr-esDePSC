@@ -72,11 +72,10 @@ void node_products(Products *products ,json_t *array_products){
     size_t array_size = json_array_size(array_products);
 
     for(int index = 0; index < array_size; index++){
-        json_t *product_json = json_array_get(array_products, index)
+        json_t *product_json = json_array_get(array_products, index);
         Product *new_product = malloc(sizeof(Product));
-        if (!product) {
+        if (!new_product) {
             fprintf(stderr, "Memory allocation failed\n");
-            return NULL;
         }
         new_product->id = json_integer_value(json_object_get(product_json, "id"));
         new_product->price = json_real_value(json_object_get(product_json, "price"));
@@ -130,11 +129,10 @@ Users *user_get(){
     size_t array_size = json_array_size(array_users);
 
     for(int index = 0; index < array_size; index++){
-        json_t *user_json = json_array_get(array_users, index)
+        json_t *user_json = json_array_get(array_users, index);
         User *new_user = malloc(sizeof(User));
-        if (!user) {
+        if (!new_user) {
             fprintf(stderr, "Memory allocation failed\n");
-            return NULL;
         }
         new_user->id = json_integer_value(json_object_get(user_json, "id"));
         new_user->name = json_string_value(json_object_get(user_json, "name"));
@@ -201,6 +199,9 @@ bool cart_put(Cart *cart){
     return request;
 }
 
+
+
+#if 0
 int main() {
     // Definir o número de produtos
     size_t n_products = 2;
@@ -231,3 +232,4 @@ int main() {
 
     return 0;
 }
+#endif
