@@ -145,6 +145,7 @@ Users *user_get(){
 //-----------------------------------------------------------------------------------------------//
 bool cart_put(Cart *cart){
     char *url = "https://dummyjson.com/carts/ahfweifhwer";
+    // criar o json para mandar
     json_t *json_cart = json_object();
     if (!json_cart) {
         fprintf(stderr, "Failed to create JSON object\n");
@@ -193,6 +194,7 @@ bool cart_put(Cart *cart){
     }
 
     bool request = http_post_json(url, json_cart);
+    // visualizar no terminal
     char *formatted_json = json_dumps(json_cart, JSON_INDENT(4));
     printf("JSON:\n%s\n", formatted_json);
     json_decref(json_cart);
@@ -201,7 +203,7 @@ bool cart_put(Cart *cart){
 
 
 
-#if 0
+#if 1
 int main() {
     // Definir o número de produtos
     size_t n_products = 2;
@@ -220,14 +222,12 @@ int main() {
     cart->products[1].id = 2;
     cart->products[1].quantity = 5;
 
-    // Testar a função cart_put
     if (cart_put(cart)) {
         printf("Carrinho enviado com sucesso!\n");
     } else {
         printf("Falha ao enviar o carrinho.\n");
     }
 
-    // Liberar memória alocada para a estrutura Cart
     free(cart);
 
     return 0;
