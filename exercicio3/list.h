@@ -13,4 +13,4 @@ Node* createNode(void *data) ;
 void insert(Node *head, void *data);
 void forEach(Node *head, void (*func)(void *));
 void* get(Node *head, int index);
-void freeList(Node *head, void (*free_data)(void *));
+void free_list(Node *head, void (*free_data)(void *));

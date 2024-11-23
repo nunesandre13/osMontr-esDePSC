@@ -51,7 +51,7 @@ void* get(Node *head, int index) {
     return NULL;
 }
 
-void freeList(Node *head, void (*free_data)(void *)) {
+void free_list(Node *head, void (*free_data)(void *)) {
     Node *current = head;
     while (current != NULL) {
         Node *next = current->next;

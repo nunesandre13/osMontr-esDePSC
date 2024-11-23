@@ -249,36 +249,66 @@ void convert_users_to_csv(Users *users, char *filename){
     fclose(file);
 }
 
-#if 0
-int main() {
-    // Definir o número de produtos
-    size_t n_products = 2;
-
-    // Alocar memória para a estrutura Cart e seus produtos
-    Cart *cart = (Cart *)malloc(sizeof(Cart) + n_products * sizeof(cart->products[0]));
-
-    // Inicializar os campos
-    cart->user_id = 33;
-    cart->n_products = n_products;
-
-    // Inicializar os produtos
-    cart->products[0].id = 1;
-    cart->products[0].quantity = 3;
-    
-    cart->products[1].id = 2;
-    cart->products[1].quantity = 5;
-
-    if (cart_put(cart)) {
-        printf("Carrinho enviado com sucesso!\n");
-    } else {
-        printf("Falha ao enviar o carrinho.\n");
+//--------------------------------------------------------------------------------------//
+Cart *read_cart(char *filename){
+    FILE *file = fopen(filename, "r");
+    if(!file){
+        fprintf(stderr, "Error opening %s\n", filename);
+        return NULL;
     }
 
-    free(cart);
+    Cart *cart = malloc(sizeof(Cart));
+    if(!cart){
+        fprintf(stderr, "Error on allocation memory\n");
+        fclose(file);
+        return NULL;
+    }
 
-    return 0;
+    char ignore_buffer[100];
+    fscanf(file, "%s,%s\n", ignore_buffer, ignore_buffer);
+    fscanf(file, "%d,%ld\n", &cart->user_id, &cart->n_products);
+    fscanf(file, "%s,%s\n", ignore_buffer, ignore_buffer);
+
+    cart = realloc(cart, sizeof(Cart) + cart->n_products * sizeof(*cart->products));
+
+    if (!cart->products) {
+        perror("Error on allocation memory\n");
+        free(cart);
+        fclose(file);
+        return NULL;
+    }
+
+    for(int i = 0; i < cart->n_products; i++){
+        fscanf(file, "%d,%ld\n", &cart->products[i].id, &cart->products[i].quantity);
+    }
+
+    fclose(file);
+    return cart;
 }
-#endif
+
+//----------------------------------------------------------------------------//
+
+void free_cart(Cart *cart){
+    free(cart);
+}
+
+void free_single_product(void *data){
+    Product *product = (Product *)data;
+    free(product);
+}
+
+void free_single_user(void *data){
+    User *user = (User *)data;
+    free(user);
+}
+
+void free_products(Products *products){
+    free_list(products->head, free_single_product);
+}
+
+void free_users(Users *users){
+    free_list(users->head, free_single_user);
+}
 
 
 //Escrita dos produtos para o ficheiro products.csv
@@ -293,14 +323,14 @@ int main() {
 
     convert_products_to_csv(products, "products.csv");
 
-    //free_products(products); TODO()
+    free_products(products);
 
     return 0;
 }
 #endif 
 
 
-
+//Escrita dos users para o ficheiro users.csv
 #if 0
 int main(){
     Users *users = user_get();
@@ -310,15 +340,24 @@ int main(){
     }
     convert_users_to_csv(users, "users.csv");
 
-    //free_users(users); TODO()
+    free_users(users); 
 
     return 0;
 }
 #endif
 
-
-#if 0
+//Leitura do ficheiro cart.csv e realização de HTTP POST
+#if 1
 int main(){
-    TODO()  
+    char *file = "cart.csv";
+    Cart *cart = read_cart(file);
+
+    if (cart_put(cart)) {
+        printf("Carrinho enviado com sucesso!\n");
+    } else {
+        printf("Falha ao enviar o carrinho.\n");
+    }
+    free_cart(cart);
 }
 #endif
+
