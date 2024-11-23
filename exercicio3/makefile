@@ -17,3 +17,9 @@ list.o: list.c
 
 clean:
 	rm *.o ex3
+	
+clean_products:
+	> products.csv
+
+clean_users:
+	> users.csv

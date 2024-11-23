@@ -29,11 +29,19 @@ typedef struct {
     } products[];
 } Cart;
 
-//--------------------------------------------------------------------//
+typedef struct {
+    Node *head;
+} Users;
 
 typedef struct{
     Node *head;
 } Products;
+
+//--------------------------------------------------------------------//
+
+
+void node_products(Products *products, json_t *array_products);
+void node_users(Users *users, json_t *array_users);
 
 
 Products *products_get(){
@@ -88,9 +96,6 @@ void node_products(Products *products ,json_t *array_products){
 
 //--------------------------------------------------------------------------------------------------------//
 
-typedef struct {
-    Node *head;
-} Users;
 
 
 Users *user_get(){
@@ -102,7 +107,7 @@ Users *user_get(){
     }
     json_t *array_users = json_object_get(root, "users");
     if (!array_users || !json_is_array(array_users)) {
-        fprintf(stderr, "Invalid or missing 'products' array\n");
+        fprintf(stderr, "Invalid or missing 'users' array\n");
         json_decref(root); 
         return NULL;
     }
@@ -135,7 +140,8 @@ Users *user_get(){
             fprintf(stderr, "Memory allocation failed\n");
         }
         new_user->id = json_integer_value(json_object_get(user_json, "id"));
-        new_user->name = json_string_value(json_object_get(user_json, "name"));
+        const char *first_name = json_string_value(json_object_get(user_json, "firstName"));
+        new_user->name = strdup(first_name);
 
         insert(users ->head, new_user);
     }
@@ -201,9 +207,49 @@ bool cart_put(Cart *cart){
     return request;
 }
 
+//------------------------------------------------------------------------------//
 
+void convert_products_to_csv(Products *products,char *filename) {
+    FILE *file = fopen(filename, "w");
 
-#if 1
+    fprintf(file, "ID\tPrice\tDescription\tCategory\n");
+
+    Node *current = products->head->next;
+    while(current != NULL){
+        Product *single_product = current->data;
+        fprintf(file,"%d\t%.2f\t\"%s\"\t\"%s\"\n",
+                single_product->id,
+                single_product->price,
+                single_product->description,
+                single_product->category
+        );
+        current = current->next;
+    }
+    fclose(file);
+}
+
+void convert_users_to_csv(Users *users, char *filename){
+    FILE *file = fopen(filename, "w");
+    if (!file) {
+        fprintf(stderr, "Erro ao abrir o arquivo %s para escrita.\n", filename);
+        return;
+    }
+    
+    fprintf(file, "ID\tName\n");
+
+    Node *current = users->head->next;
+    while(current != NULL){
+        User *single_user = current->data;
+        fprintf(file, "%d\t\"%s\"\n",
+                single_user->id,
+                single_user->name
+        );
+        current = current->next;
+    }
+    fclose(file);
+}
+
+#if 0
 int main() {
     // Definir o número de produtos
     size_t n_products = 2;
@@ -231,5 +277,48 @@ int main() {
     free(cart);
 
     return 0;
+}
+#endif
+
+
+//Escrita dos produtos para o ficheiro products.csv
+#if 0
+int main() {
+    
+    Products *products = products_get();
+    if (!products) {
+        fprintf(stderr, "Failed to fetch products.\n");
+        return 1;
+    }
+
+    convert_products_to_csv(products, "products.csv");
+
+    //free_products(products); TODO()
+
+    return 0;
+}
+#endif 
+
+
+
+#if 0
+int main(){
+    Users *users = user_get();
+    if(!users) {
+        fprintf(stderr, "Failed to fetch users. \n");
+        return 1;
+    }
+    convert_users_to_csv(users, "users.csv");
+
+    //free_users(users); TODO()
+
+    return 0;
+}
+#endif
+
+
+#if 0
+int main(){
+    TODO()  
 }
 #endif
