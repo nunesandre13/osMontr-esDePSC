@@ -1,6 +1,3 @@
-#ifndef LIST_H
-#define LIST_H
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -17,4 +14,3 @@ void insert(Node *head, void *data);
 void forEach(Node *head, void (*func)(void *));
 void* get(Node *head, int index);
 void free_list(Node *head, void (*free_data)(void *));
-#endif
