@@ -5,7 +5,7 @@
 #include <curl/curl.h>  // Para usar a biblioteca libcurl, que é usada na função get_uri
 
 #include "users.h"
-#include "help.h"
+#include "help3.h"
 
 
 Users *user_get(){

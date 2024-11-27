@@ -5,7 +5,7 @@
 #include <curl/curl.h>  // Para usar a biblioteca libcurl, que é usada na função get_uri
 
 #include "products.h"
-#include "help.h"
+#include "help3.h"
 
 Products *products_get(){
     char *url = "https://dummyjson.com/products";

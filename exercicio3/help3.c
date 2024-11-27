@@ -4,7 +4,7 @@
 #include <jansson.h>    // Para trabalhar com JSON
 #include <curl/curl.h>  // Para usar a biblioteca libcurl, que é usada na função get_uri
 
-#include "help.h"
+#include "help3.h"
 
 #define BUFFER_CHUNK (4 * 1024)
 
