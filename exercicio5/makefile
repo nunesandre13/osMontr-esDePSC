@@ -5,11 +5,17 @@
 LIBRARY = -lcurl -ljansson
 CFLAGS = -g -std=c2x
 
-ex5: mainEx5.o help3.o list.o cart.o products.o users.o
-	gcc mainEx5.o help3.o list.o cart.o products.o users.o -o ex5 -Wall $(LIBRARY) $(CFLAGS)
+ex5: mainEx5.o help3.o list.o cart.o products.o users.o helpers.o commands.o
+	gcc mainEx5.o helpers.o commands.o help3.o list.o cart.o products.o users.o -o ex5 -Wall $(LIBRARY) $(CFLAGS)
 
 mainEx5.o: mainEx5.c
 	gcc mainEx5.c -c $(CFLAGS)
+
+helpers.o: helpers.c
+	gcc helpers.c -c $(CFLAGS)
+
+commands.o: commands.c
+	gcc commands.c -c $(CFLAGS)
 
 cart.o: ../exercicio3/cart.c
 	gcc ../exercicio3/cart.c -c $(CFLAGS)
