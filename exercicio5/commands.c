@@ -3,7 +3,7 @@
 #include <string.h>     // Caso precise de funções de manipulação de strings
 #include <jansson.h>    // Para trabalhar com JSON
 #include <curl/curl.h>  // Para usar a biblioteca libcurl, que é usada na função get_uri
-
+#include <string.h>
 
 #include "helpers.h"
 #include "commands.h"
@@ -80,8 +80,6 @@ void list_specified_products(char* input_category, char *input_critery, Products
 }
 
 
-
-
 void list_products_in_cart(My_Cart *cart, Products *products){
     if(cart->user_id == -1){
         printf("Não se esqueça de inserir o ID antes de sequer olhar para dentro do carrinho\n");
@@ -109,8 +107,9 @@ void list_products_in_cart(My_Cart *cart, Products *products){
     putchar('\n');
 }
 
-void buy_product(char *input_product_id, char *input_product_quantity, My_Cart *cart){
-    if(cart->user_id == -1){
+
+void buy_product(char *input_product_id, char *input_product_quantity, My_Cart **cart){
+    if((*cart)->user_id == -1){
         printf("Não se esqueça de inserir o ID antes de comprar algo\n");
         putchar('\n');
         return;
@@ -120,37 +119,40 @@ void buy_product(char *input_product_id, char *input_product_quantity, My_Cart *
     if(product_id == 0 || product_quantity == 0){
         printf("Erro ao comprar\n");
     }
-    bool product_exists = false;
-    for(int i = 0; i < cart->n_products; i++){
-        if(cart->products[i]->id == product_id){
-            cart->products[i]->quantity += product_quantity;
-            product_exists = true;
+
+    for(int i = 0; i < (*cart)->n_products; i++){
+        if((*cart)->products[i]->id == product_id){
+            (*cart)->products[i]->quantity += product_quantity;
             printf("Ainda queres mais desse produto?\n");
-            break;
-        }
-    }
-    if(!product_exists){
-        cart = realloc(cart, sizeof(cart) + sizeof(My_Product));
-        if (cart == NULL) {
-            printf("Erro ao alocar memória para o novo produto\n");
+            putchar('\n');
             return;
         }
-        My_Product *new_product = malloc(sizeof(My_Product));
-        if (cart == NULL) {
-            printf("Erro ao alocar memória para o novo produto\n");
-            return;
-        }
-        new_product->id = product_id;
-        new_product->quantity = product_quantity;
-
-
-        memccpy(cart->products[cart->n_products],new_product);
-        //cart->products[cart->n_products]->id = product_id;
-        //cart->products[cart->n_products]->quantity = product_quantity;
-        free(new_product);
-        cart->n_products++;
-        printf("Novo produto adicionado!\n");
     }
+
+    size_t new_size = sizeof(My_Cart) + ((*cart)->n_products + 1) * sizeof(My_Product *);
+    My_Cart *memory_cart = realloc(*cart, new_size);
+    if (memory_cart == NULL) {
+        printf("Erro ao alocar memória para o carrinho\n");
+        putchar('\n');
+        return;
+    }
+
+    *cart = memory_cart; 
+
+    My_Product *new_product = malloc(sizeof(My_Product));
+    if (new_product == NULL) {
+        printf("Erro ao alocar memória para o novo produto\n");
+        putchar('\n');
+        return;
+    }
+
+    new_product->id = product_id;
+    new_product->quantity = product_quantity;
+
+    (*cart)->products[(*cart)->n_products] = new_product;
+    (*cart)->n_products++; 
+
+    printf("Novo produto adicionado!\n");
     putchar('\n');
 }
 

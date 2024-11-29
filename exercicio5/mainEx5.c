@@ -60,7 +60,7 @@ int main(){
                     printf("Erro: Tem de user o formato Produtos <categoria> <critério>.\n");
                     putchar('\n');
                 } else {
-                    buy_product(first_option, second_option, cart);
+                    buy_product(first_option, second_option, &cart);
                 }
 				break;
 			case 'F':

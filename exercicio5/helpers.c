@@ -20,14 +20,11 @@ void free_my_cart(My_Cart *cart) {
 
 void reset_my_cart(My_Cart *cart){
     cart->user_id = -1;
-
+    cart->n_products = 0;
+    
     for (int i = 0; i < cart->n_products; i++) {
         free(cart->products[i]); 
     }
-
-    free(cart->products);
-
-    cart->n_products = 0;
 
 }
 
