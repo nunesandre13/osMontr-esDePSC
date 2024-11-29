@@ -130,19 +130,24 @@ void buy_product(char *input_product_id, char *input_product_quantity, My_Cart *
         }
     }
     if(!product_exists){
-        cart->products = realloc(cart->products, sizeof(cart) * (cart->n_products + 4));
-        if (cart->products == NULL) {
+        cart = realloc(cart, sizeof(cart) + sizeof(My_Product));
+        if (cart == NULL) {
             printf("Erro ao alocar memória para o novo produto\n");
             return;
         }
-        cart->products[cart->n_products] = malloc(sizeof(My_Product));
-        if (cart->products[cart->n_products] == NULL) {
+        My_Product *new_product = malloc(sizeof(My_Product));
+        if (cart == NULL) {
             printf("Erro ao alocar memória para o novo produto\n");
             return;
         }
-        cart->products[cart->n_products]->id = product_id;
-        cart->products[cart->n_products]->quantity = product_quantity;
+        new_product->id = product_id;
+        new_product->quantity = product_quantity;
 
+
+        memccpy(cart->products[cart->n_products],new_product);
+        //cart->products[cart->n_products]->id = product_id;
+        //cart->products[cart->n_products]->quantity = product_quantity;
+        free(new_product);
         cart->n_products++;
         printf("Novo produto adicionado!\n");
     }

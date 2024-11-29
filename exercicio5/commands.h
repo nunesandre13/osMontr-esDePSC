@@ -2,9 +2,6 @@
 #define COMMANDS_H
 
 
-
-
-
 void list_users(Users *users);
 void identify_user(char* input_id,My_Cart *cart);
 void list_specified_products(char* input_category, char *input_critery, Products *products);

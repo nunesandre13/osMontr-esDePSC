@@ -14,7 +14,7 @@ typedef struct{
 typedef struct {
     int user_id;
     size_t n_products;
-    My_Product **products;
+    My_Product *products[];
 } My_Cart;
 
 

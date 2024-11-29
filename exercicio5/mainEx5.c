@@ -12,10 +12,9 @@ int main(){
     Users *users = user_get();
     Products *products = products_get();
     //Cart *cart = malloc(sizeof(Cart));
-    My_Cart *cart = malloc(sizeof(My_Cart));
+    My_Cart *cart = malloc(sizeof(My_Cart) * 3);
     cart->user_id = -1;
     cart->n_products = 0;
-    cart->products = malloc(sizeof(cart));
     printf("//-------------------------------------------------------//\n");
     printf("Pode começar...\n");
     putchar('\n');

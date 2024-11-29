@@ -15,8 +15,6 @@ void free_my_cart(My_Cart *cart) {
         free(cart->products[i]); 
     }
 
-    free(cart->products);
-
     free(cart);
 }
 
@@ -31,11 +29,6 @@ void reset_my_cart(My_Cart *cart){
 
     cart->n_products = 0;
 
-    cart->products = malloc(sizeof(cart)); // 8 bytes
-    if (cart->products == NULL) {
-        printf("Erro ao alocar memória para o carrinho.\n");
-        return;
-    }
 }
 
 Cart *my_cart_convert(My_Cart *my_cart) {
