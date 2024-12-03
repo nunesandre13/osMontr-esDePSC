@@ -9,7 +9,7 @@
 #include "commands.h"
 
 
-void list_users(Users *users) { 
+void list_users(char *unused_first_input, char *unused_second_input, Users *users, Products *unused_products, My_Cart **unused_cart) { 
     putchar('\n');
     Node *new_head = users->head;
     for(Node *user = new_head->next; user != NULL; user = user->next){
@@ -21,19 +21,20 @@ void list_users(Users *users) {
     putchar('\n');
 }
 
-void identify_user(char* input_id,My_Cart *cart){
+void identify_user(char* input_id, char *unused_second_input, Users *unused_users, Products *unused_products, My_Cart **cart){
     putchar('\n');
+    My_Cart *cart_ref = *cart;
     int id = atoi(input_id);
     if(id == 0){
         printf("Error with ID\n");
     } else {
-        cart->user_id = id;
+        cart_ref->user_id = id;
         printf("Carrinho com ID %d inicializado\n", id);
     }
     putchar('\n');
 }
 
-void list_specified_products(char* input_category, char *input_critery, Products *products){
+void list_specified_products(char* input_category, char *input_critery, Users *unused_users, Products *products, My_Cart **unused_cart){
     putchar('\n');
     int category_chosed = false; // flag 
     if (strcmp(input_critery, "<") != 0 && strcmp(input_critery, ">") != 0) {
@@ -80,23 +81,24 @@ void list_specified_products(char* input_category, char *input_critery, Products
 }
 
 
-void list_products_in_cart(My_Cart *cart, Products *products){
-    if(cart->user_id == -1){
+void list_products_in_cart(char *unused_first_input, char *unused_second_input, Users *unused_users, Products *products, My_Cart **cart){
+    My_Cart *cart_ref = *cart;
+    if(cart_ref->user_id == -1){
         printf("Não se esqueça de inserir o ID antes de sequer olhar para dentro do carrinho\n");
         putchar('\n');
         return;
     }
     putchar('\n');
-    if(cart->n_products == 0){
+    if(cart_ref->n_products == 0){
         printf("O carrinho ainda não tem produtos. Compra algo!\n");
         putchar('\n');
         return;
     }
     printf("Produtos presentes no carrinho:\n");
 
-    for(int i = 0; i < cart->n_products; i++){
-        int product_id = cart->products[i]->id;
-        size_t product_quantity = cart->products[i]->quantity;
+    for(int i = 0; i < cart_ref->n_products; i++){
+        int product_id = cart_ref->products[i]->id;
+        size_t product_quantity = cart_ref->products[i]->quantity;
 
         float product_price = get_product_price(product_id, products);
         const char *product_description = get_product_description(product_id, products);
@@ -108,7 +110,7 @@ void list_products_in_cart(My_Cart *cart, Products *products){
 }
 
 
-void buy_product(char *input_product_id, char *input_product_quantity, My_Cart **cart){
+void buy_product(char *input_product_id, char *input_product_quantity,  Users *unused_users, Products *unused_products, My_Cart **cart){
     if((*cart)->user_id == -1){
         printf("Não se esqueça de inserir o ID antes de comprar algo\n");
         putchar('\n');
@@ -118,6 +120,7 @@ void buy_product(char *input_product_id, char *input_product_quantity, My_Cart *
     size_t product_quantity = (size_t) atoi(input_product_quantity);
     if(product_id == 0 || product_quantity == 0){
         printf("Erro ao comprar\n");
+        return;
     }
 
     for(int i = 0; i < (*cart)->n_products; i++){
@@ -156,28 +159,29 @@ void buy_product(char *input_product_id, char *input_product_quantity, My_Cart *
     putchar('\n');
 }
 
-void end_shopping(My_Cart *cart, Products *products){
+void end_shopping(char *unused_first_input, char *unused_second_input, Users *unused_users, Products *products, My_Cart **cart){
     putchar('\n');
-    if(cart->n_products == 0){
+    My_Cart *cart_ref = *cart;
+    if(cart_ref->n_products == 0){
         printf("Não existe compra com carrinho vazio...\n");
         putchar('\n');
         return;
     }
     float total_price = 0.0;
     
-    for(int i = 0; i < cart->n_products; i++){
-        int product_id = cart->products[i]->id;
-        size_t product_quantity = cart->products[i]->quantity;
+    for(int i = 0; i < cart_ref->n_products; i++){
+        int product_id = cart_ref->products[i]->id;
+        size_t product_quantity = cart_ref->products[i]->quantity;
         float product_price = get_product_price(product_id, products);
 
         total_price += (product_price * product_quantity);
     }
 
     printf("Preço total: %.2f\n", total_price);
-    printf("Até à próxima carrinho com ID %d\n", cart->user_id);
+    printf("Até à próxima carrinho com ID %d\n", cart_ref->user_id);
     putchar('\n');
 
-    Cart *cart_to_send = my_cart_convert(cart);
+    Cart *cart_to_send = my_cart_convert(cart_ref);
     bool result = cart_put(cart_to_send);
     free_cart(cart_to_send); //Apagar depois de enviar;
     if(!result){
@@ -187,7 +191,7 @@ void end_shopping(My_Cart *cart, Products *products){
     printf("Carrinho enviado com sucesso!\n");
     printf("Novo carrinho retirado, insira o ID e comece as compras!\n");
 
-    reset_my_cart(cart);
+    reset_my_cart(cart_ref);
 
     putchar('\n');
 }

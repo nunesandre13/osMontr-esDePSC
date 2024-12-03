@@ -11,7 +11,6 @@
 int main(){
     Users *users = user_get();
     Products *products = products_get();
-    //Cart *cart = malloc(sizeof(Cart));
     My_Cart *cart = malloc(sizeof(My_Cart) * 3);
     cart->user_id = -1;
     cart->n_products = 0;
@@ -20,6 +19,7 @@ int main(){
     putchar('\n');
 	char line[100];
 	while (1) {
+        putchar('>');
 		if (fgets(line, sizeof(line), stdin) == NULL)
 			return EXIT_FAILURE;
 		char *command = strtok(line, " \n");
@@ -30,7 +30,7 @@ int main(){
 		switch (command[0]) {
 			case 'U':
             case 'u':
-                list_users(users);
+                list_users(first_option, second_option, users, products, &cart);
                 break;
 			case 'T':
             case 't':
@@ -38,7 +38,7 @@ int main(){
                     printf("Erro: Tem de indicar o id\n");
                     putchar('\n');
                 } else { 
-				    identify_user(first_option, cart);
+				    identify_user(first_option, second_option, users, products, &cart);
                 }
 				break;
 			case 'P':
@@ -47,12 +47,12 @@ int main(){
                     printf("Erro: Tem de user o formato Produtos <categoria> <critério>.\n");
                     putchar('\n');
                 } else {
-                    list_specified_products(first_option, second_option, products);
+                    list_specified_products(first_option, second_option, users, products, &cart);
                 }
 				break;
 			case 'C':
             case 'c':
-                list_products_in_cart(cart, products);
+                list_products_in_cart(first_option, second_option, users, products, &cart);
 				break;
 			case 'O':
             case 'o':
@@ -60,12 +60,12 @@ int main(){
                     printf("Erro: Tem de user o formato Produtos <categoria> <critério>.\n");
                     putchar('\n');
                 } else {
-                    buy_product(first_option, second_option, &cart);
+                    buy_product(first_option, second_option, users, products, &cart);
                 }
 				break;
 			case 'F':
             case 'f':
-				end_shopping(cart, products);
+				end_shopping(first_option, second_option, users, products, &cart);
 				break;
             case 'E':
             case 'e':

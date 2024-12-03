@@ -5,6 +5,7 @@
         "help.h": "c",
         "stdio.h": "c",
         "list.h": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "errno.h": "c"
     }
 }
